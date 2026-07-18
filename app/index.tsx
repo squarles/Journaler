@@ -28,7 +28,10 @@ export default function Index() {
         options={{
           title: "Journaler",
           headerRight: () => (
-            <Pressable onPress={() => router.push("/forms/new")}>
+            <Pressable
+              onPress={() => router.push("/forms/new")}
+              style={styles.newButton}
+            >
               <Text style={styles.newText}>+ New Form</Text>
             </Pressable>
           ),
@@ -78,6 +81,10 @@ function createStyles(colors: ThemeColors) {
     },
     list: {
       padding: 16,
+    },
+    newButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
     },
     newText: {
       fontSize: 16,

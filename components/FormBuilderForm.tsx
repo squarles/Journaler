@@ -62,10 +62,17 @@ export function FormBuilderForm({
   }
 
   function handleSubmit() {
-    onSubmit({ title: title.trim(), description: description.trim(), questions });
+    onSubmit({
+      title: title.trim(),
+      description: description.trim(),
+      questions: questions.map((q) => ({ ...q, prompt: q.prompt.trim() })),
+    });
   }
 
-  const canSubmit = title.trim().length > 0 && questions.length > 0;
+  const canSubmit =
+    title.trim().length > 0 &&
+    questions.length > 0 &&
+    questions.every((q) => q.prompt.trim().length > 0);
 
   return (
     <ScrollView

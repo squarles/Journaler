@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { router, Stack } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
+import { useCallback, useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { FormListItem } from "@/components/FormListItem";
 import { listForms } from "@/db/forms";
@@ -25,7 +25,7 @@ export default function Index() {
           title: "Journaler",
           headerRight: () => (
             <Pressable onPress={() => router.push("/forms/new")}>
-              <Text style={styles.newText}>+ New</Text>
+              <Text style={styles.newText}>+ New Form</Text>
             </Pressable>
           ),
         }}

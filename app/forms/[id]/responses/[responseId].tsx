@@ -87,7 +87,7 @@ export default function ResponseDetail() {
     );
     if (!confirmed) return;
     await deleteResponse(db, respId);
-    router.replace({ pathname: "/forms/[id]", params: { id } });
+    router.back();
   }
 
   if (!form) {

@@ -51,7 +51,7 @@ export default function EditForm() {
       description: data.description || null,
       questions: data.questions,
     });
-    router.replace({ pathname: "/forms/[id]", params: { id } });
+    router.back();
   }
 
   if (!form) {

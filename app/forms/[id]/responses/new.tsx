@@ -51,7 +51,7 @@ export default function NewResponse() {
     }));
 
     await createResponse(db, formId, answers);
-    router.replace({ pathname: "/forms/[id]", params: { id } });
+    router.back();
   }
 
   if (!form) {

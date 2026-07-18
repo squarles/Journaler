@@ -5,12 +5,24 @@ import { StyleSheet, View } from "react-native";
 import { FormBuilderForm, type FormBuilderSubmitData } from "@/components/FormBuilderForm";
 import { createForm } from "@/db/forms";
 
+import { notify } from "@/lib/confirm";
+
 export default function NewForm() {
   const db = useSQLiteContext();
 
   async function handleSubmit(data: FormBuilderSubmitData) {
-    if (!data.title) return;
-    if (data.questions.length == 0) return;
+    if (!data.title) {
+      notify("Missing title", "Please enter a title for this form.");
+      return;
+    }
+    if (data.questions.length == 0) {
+      notify("Empty form", "Please add at least 1 question.");
+      return;
+    }
+    if (!data.questions.every((q) => q.prompt.trim().length > 0)) {
+      notify("Empty question(s)", "Please ensure all questions have text.");
+      return;
+    }
     const newFormId = await createForm(db, {
       title: data.title,
       description: data.description || null,

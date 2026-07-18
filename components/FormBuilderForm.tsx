@@ -125,7 +125,9 @@ export function FormBuilderForm({
 
       <Pressable
         style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
-        disabled={!canSubmit}
+        //These restrictions are implemented in new.tsx/edit.tsx,
+        //which notify the user about how to fix the bad data.
+        //disabled={!canSubmit}
         onPress={handleSubmit}
       >
         <Text style={styles.submitText}>{submitLabel}</Text>

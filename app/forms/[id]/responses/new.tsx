@@ -5,8 +5,10 @@ import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 
 import { QuestionTypeInput } from "@/components/QuestionTypeInput";
+import type { ThemeColors } from "@/constants/theme";
 import { getFormWithQuestions } from "@/db/forms";
 import { createResponse } from "@/db/responses";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { notify } from "@/lib/confirm";
 import type { AnswerDraft, FormWithQuestions } from "@/types/journal";
 
@@ -14,6 +16,8 @@ export default function NewResponse() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const formId = Number(id);
   const db = useSQLiteContext();
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
   const [form, setForm] = useState<FormWithQuestions | null>(null);
   const [values, setValues] = useState<
     Record<number, string | number | boolean | null>
@@ -80,25 +84,27 @@ export default function NewResponse() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-  },
-  saveButton: {
-    backgroundColor: "#1c1c1e",
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 8,
-  },
-  saveText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 48,
+    },
+    saveButton: {
+      backgroundColor: colors.buttonPrimaryBackground,
+      borderRadius: 12,
+      paddingVertical: 14,
+      alignItems: "center",
+      marginTop: 8,
+    },
+    saveText: {
+      color: colors.buttonPrimaryText,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+  });
+}

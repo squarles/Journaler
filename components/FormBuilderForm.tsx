@@ -9,6 +9,8 @@ import {
 } from "react-native";
 
 import { QuestionTypeEditor } from "@/components/QuestionTypeEditor";
+import type { ThemeColors } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { QuestionDraft } from "@/types/journal";
 
 export interface FormBuilderSubmitData {
@@ -32,6 +34,8 @@ export function FormBuilderForm({
   submitLabel,
   onSubmit,
 }: Props) {
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [questions, setQuestions] = useState<QuestionDraft[]>(initialQuestions);
@@ -86,7 +90,7 @@ export function FormBuilderForm({
         value={title}
         onChangeText={setTitle}
         placeholder="Form title"
-        placeholderTextColor="#9aa0a6"
+        placeholderTextColor={colors.placeholder}
       />
 
       <Text style={styles.label}>Description (optional)</Text>
@@ -95,7 +99,7 @@ export function FormBuilderForm({
         value={description}
         onChangeText={setDescription}
         placeholder="What is this form for?"
-        placeholderTextColor="#9aa0a6"
+        placeholderTextColor={colors.placeholder}
         multiline
       />
 
@@ -136,67 +140,69 @@ export function FormBuilderForm({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#6b7075",
-    marginBottom: 6,
-    marginTop: 16,
-    textTransform: "uppercase",
-  },
-  titleInput: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#1c1c1e",
-    paddingVertical: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5ea",
-  },
-  descriptionInput: {
-    fontSize: 15,
-    color: "#1c1c1e",
-    paddingVertical: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5ea",
-    minHeight: 40,
-  },
-  questionsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  addText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#0a84ff",
-  },
-  emptyText: {
-    fontSize: 14,
-    color: "#8e8e93",
-    marginTop: 8,
-    marginBottom: 8,
-  },
-  submitButton: {
-    backgroundColor: "#1c1c1e",
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 24,
-  },
-  submitButtonDisabled: {
-    backgroundColor: "#c7c7cc",
-  },
-  submitText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 48,
+    },
+    label: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: colors.textSecondary,
+      marginBottom: 6,
+      marginTop: 16,
+      textTransform: "uppercase",
+    },
+    titleInput: {
+      fontSize: 20,
+      fontWeight: "600",
+      color: colors.text,
+      paddingVertical: 6,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    descriptionInput: {
+      fontSize: 15,
+      color: colors.text,
+      paddingVertical: 6,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      minHeight: 40,
+    },
+    questionsHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    addText: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: colors.tint,
+    },
+    emptyText: {
+      fontSize: 14,
+      color: colors.textTertiary,
+      marginTop: 8,
+      marginBottom: 8,
+    },
+    submitButton: {
+      backgroundColor: colors.buttonPrimaryBackground,
+      borderRadius: 12,
+      paddingVertical: 14,
+      alignItems: "center",
+      marginTop: 24,
+    },
+    submitButtonDisabled: {
+      backgroundColor: colors.borderDisabled,
+    },
+    submitText: {
+      color: colors.buttonPrimaryText,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+  });
+}

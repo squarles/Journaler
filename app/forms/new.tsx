@@ -4,11 +4,19 @@ import { StyleSheet, View } from "react-native";
 
 import { FormBuilderForm, type FormBuilderSubmitData } from "@/components/FormBuilderForm";
 import { createForm } from "@/db/forms";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 import { notify } from "@/lib/confirm";
 
 export default function NewForm() {
   const db = useSQLiteContext();
+  const colors = useThemeColors();
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+  });
 
   async function handleSubmit(data: FormBuilderSubmitData) {
     if (!data.title) {
@@ -47,10 +55,3 @@ export default function NewForm() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-});

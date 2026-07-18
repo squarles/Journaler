@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { Form } from "@/types/journal";
 
 interface Props {
@@ -8,6 +9,26 @@ interface Props {
 }
 
 export function FormListItem({ form, onPress }: Props) {
+  const colors = useThemeColors();
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: colors.card,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+    },
+    title: {
+      fontSize: 17,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    description: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: 4,
+    },
+  });
+
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Text style={styles.title}>{form.title}</Text>
@@ -19,22 +40,3 @@ export function FormListItem({ form, onPress }: Props) {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#f5f5f7",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#1c1c1e",
-  },
-  description: {
-    fontSize: 14,
-    color: "#6b7075",
-    marginTop: 4,
-  },
-});

@@ -9,6 +9,7 @@ import {
   type FormBuilderSubmitData,
 } from "@/components/FormBuilderForm";
 import { getFormWithQuestions, updateForm } from "@/db/forms";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { FormWithQuestions } from "@/types/journal";
 
 import { notify } from "@/lib/confirm";
@@ -17,6 +18,13 @@ export default function EditForm() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const formId = Number(id);
   const db = useSQLiteContext();
+  const colors = useThemeColors();
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+  });
   const [form, setForm] = useState<FormWithQuestions | null>(null);
 
   useFocusEffect(
@@ -68,10 +76,3 @@ export default function EditForm() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-});

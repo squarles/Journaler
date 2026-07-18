@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Switch, Text, TextInput, View } from "react-native";
 
+import type { ThemeColors } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { QuestionDraft, QuestionType } from "@/types/journal";
 
 const TYPE_LABELS: Record<QuestionType, string> = {
@@ -29,6 +31,9 @@ export function QuestionTypeEditor({
   onMoveUp,
   onMoveDown,
 }: Props) {
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.card}>
       <View style={styles.row}>
@@ -38,7 +43,7 @@ export function QuestionTypeEditor({
           value={question.prompt}
           onChangeText={(prompt) => onChange({ ...question, prompt })}
           placeholder="Question prompt"
-          placeholderTextColor="#9aa0a6"
+          placeholderTextColor={colors.placeholder}
         />
       </View>
 
@@ -103,83 +108,85 @@ export function QuestionTypeEditor({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#f5f5f7",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    gap: 10,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  index: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#6b7075",
-  },
-  promptInput: {
-    flex: 1,
-    fontSize: 16,
-    paddingVertical: 6,
-    color: "#1c1c1e",
-  },
-  chipRow: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-  },
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: "#e5e5ea",
-  },
-  chipActive: {
-    backgroundColor: "#1c1c1e",
-  },
-  chipText: {
-    fontSize: 13,
-    color: "#3c3c43",
-  },
-  chipTextActive: {
-    color: "#ffffff",
-  },
-  footerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  requiredRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  requiredLabel: {
-    fontSize: 13,
-    color: "#3c3c43",
-  },
-  actionsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  iconButton: {
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-  },
-  iconText: {
-    fontSize: 16,
-    color: "#1c1c1e",
-  },
-  iconTextDisabled: {
-    color: "#c7c7cc",
-  },
-  removeText: {
-    fontSize: 13,
-    color: "#d70015",
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      backgroundColor: colors.card,
+      borderRadius: 12,
+      padding: 12,
+      marginBottom: 12,
+      gap: 10,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    index: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: colors.textSecondary,
+    },
+    promptInput: {
+      flex: 1,
+      fontSize: 16,
+      paddingVertical: 6,
+      color: colors.text,
+    },
+    chipRow: {
+      flexDirection: "row",
+      gap: 8,
+      flexWrap: "wrap",
+    },
+    chip: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+      backgroundColor: colors.border,
+    },
+    chipActive: {
+      backgroundColor: colors.buttonPrimaryBackground,
+    },
+    chipText: {
+      fontSize: 13,
+      color: colors.chipText,
+    },
+    chipTextActive: {
+      color: colors.buttonPrimaryText,
+    },
+    footerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    requiredRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    requiredLabel: {
+      fontSize: 13,
+      color: colors.chipText,
+    },
+    actionsRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+    },
+    iconButton: {
+      paddingHorizontal: 4,
+      paddingVertical: 4,
+    },
+    iconText: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    iconTextDisabled: {
+      color: colors.borderDisabled,
+    },
+    removeText: {
+      fontSize: 13,
+      color: colors.destructive,
+    },
+  });
+}

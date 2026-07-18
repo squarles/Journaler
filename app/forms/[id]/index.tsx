@@ -5,8 +5,10 @@ import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 
 import { ResponseListItem } from "@/components/ResponseListItem";
+import type { ThemeColors } from "@/constants/theme";
 import { deleteForm, getFormWithQuestions } from "@/db/forms";
 import { listResponsesForForm } from "@/db/responses";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { confirmAsync } from "@/lib/confirm";
 import type { FormResponse, FormWithQuestions } from "@/types/journal";
 
@@ -14,6 +16,8 @@ export default function FormDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const formId = Number(id);
   const db = useSQLiteContext();
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
   const [form, setForm] = useState<FormWithQuestions | null>(null);
   const [responses, setResponses] = useState<FormResponse[]>([]);
 
@@ -100,69 +104,71 @@ export default function FormDetail() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5ea",
-    gap: 6,
-  },
-  description: {
-    fontSize: 14,
-    color: "#6b7075",
-  },
-  questionCount: {
-    fontSize: 13,
-    color: "#8e8e93",
-  },
-  actionsRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 8,
-  },
-  actionButton: {
-    backgroundColor: "#1c1c1e",
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  actionButtonText: {
-    color: "#ffffff",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  secondaryButton: {
-    backgroundColor: "#e5e5ea",
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  secondaryButtonText: {
-    color: "#1c1c1e",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  deleteText: {
-    fontSize: 13,
-    color: "#d70015",
-    marginTop: 8,
-  },
-  list: {
-    padding: 16,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  emptyText: {
-    fontSize: 14,
-    color: "#8e8e93",
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      gap: 6,
+    },
+    description: {
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    questionCount: {
+      fontSize: 13,
+      color: colors.textTertiary,
+    },
+    actionsRow: {
+      flexDirection: "row",
+      gap: 10,
+      marginTop: 8,
+    },
+    actionButton: {
+      backgroundColor: colors.buttonPrimaryBackground,
+      borderRadius: 10,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+    },
+    actionButtonText: {
+      color: colors.buttonPrimaryText,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    secondaryButton: {
+      backgroundColor: colors.border,
+      borderRadius: 10,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+    },
+    secondaryButtonText: {
+      color: colors.text,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    deleteText: {
+      fontSize: 13,
+      color: colors.destructive,
+      marginTop: 8,
+    },
+    list: {
+      padding: 16,
+    },
+    emptyContainer: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    emptyText: {
+      fontSize: 14,
+      color: colors.textTertiary,
+    },
+  });
+}

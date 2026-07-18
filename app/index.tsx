@@ -5,11 +5,15 @@ import { useCallback, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { FormListItem } from "@/components/FormListItem";
+import type { ThemeColors } from "@/constants/theme";
 import { listForms } from "@/db/forms";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { Form } from "@/types/journal";
 
 export default function Index() {
   const db = useSQLiteContext();
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
   const [forms, setForms] = useState<Form[]>([]);
 
   useFocusEffect(
@@ -66,46 +70,48 @@ export default function Index() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  list: {
-    padding: 16,
-  },
-  newText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0a84ff",
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1c1c1e",
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    color: "#6b7075",
-    marginTop: 6,
-    textAlign: "center",
-  },
-  emptyButton: {
-    marginTop: 20,
-    backgroundColor: "#1c1c1e",
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  emptyButtonText: {
-    color: "#ffffff",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    list: {
+      padding: 16,
+    },
+    newText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.tint,
+    },
+    emptyContainer: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 24,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    emptySubtitle: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: 6,
+      textAlign: "center",
+    },
+    emptyButton: {
+      marginTop: 20,
+      backgroundColor: colors.buttonPrimaryBackground,
+      borderRadius: 12,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+    },
+    emptyButtonText: {
+      color: colors.buttonPrimaryText,
+      fontSize: 15,
+      fontWeight: "600",
+    },
+  });
+}

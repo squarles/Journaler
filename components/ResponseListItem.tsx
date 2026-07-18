@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { FormResponse } from "@/types/journal";
 
 interface Props {
@@ -9,6 +10,26 @@ interface Props {
 }
 
 export function ResponseListItem({ response, preview, onPress }: Props) {
+  const colors = useThemeColors();
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: colors.card,
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 10,
+    },
+    date: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    preview: {
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginTop: 4,
+    },
+  });
+
   const date = new Date(
     `${response.createdAt.replace(" ", "T")}Z`,
   ).toLocaleString(undefined, {
@@ -27,22 +48,3 @@ export function ResponseListItem({ response, preview, onPress }: Props) {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#f5f5f7",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
-  },
-  date: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#1c1c1e",
-  },
-  preview: {
-    fontSize: 13,
-    color: "#6b7075",
-    marginTop: 4,
-  },
-});

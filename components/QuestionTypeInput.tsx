@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
+import type { ThemeColors } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import type { Question } from "@/types/journal";
 
 interface Props {
@@ -9,6 +11,9 @@ interface Props {
 }
 
 export function QuestionTypeInput({ question, value, onChange }: Props) {
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       <Text style={styles.prompt}>
@@ -22,7 +27,7 @@ export function QuestionTypeInput({ question, value, onChange }: Props) {
           value={typeof value === "string" ? value : ""}
           onChangeText={(text) => onChange(text)}
           placeholder="Your answer"
-          placeholderTextColor="#9aa0a6"
+          placeholderTextColor={colors.placeholder}
         />
       )}
 
@@ -39,7 +44,7 @@ export function QuestionTypeInput({ question, value, onChange }: Props) {
             onChange(Number.isNaN(parsed) ? text : parsed);
           }}
           placeholder="Enter a number"
-          placeholderTextColor="#9aa0a6"
+          placeholderTextColor={colors.placeholder}
           keyboardType="numeric"
         />
       )}
@@ -75,50 +80,52 @@ export function QuestionTypeInput({ question, value, onChange }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  prompt: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#1c1c1e",
-    marginBottom: 8,
-  },
-  required: {
-    color: "#d70015",
-  },
-  textInput: {
-    fontSize: 16,
-    color: "#1c1c1e",
-    borderWidth: 1,
-    borderColor: "#e5e5ea",
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  toggleRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  toggle: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#e5e5ea",
-    alignItems: "center",
-  },
-  toggleActive: {
-    backgroundColor: "#1c1c1e",
-    borderColor: "#1c1c1e",
-  },
-  toggleText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#3c3c43",
-  },
-  toggleTextActive: {
-    color: "#ffffff",
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      marginBottom: 20,
+    },
+    prompt: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: colors.text,
+      marginBottom: 8,
+    },
+    required: {
+      color: colors.destructive,
+    },
+    textInput: {
+      fontSize: 16,
+      color: colors.text,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+    },
+    toggleRow: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    toggle: {
+      flex: 1,
+      paddingVertical: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+    },
+    toggleActive: {
+      backgroundColor: colors.buttonPrimaryBackground,
+      borderColor: colors.buttonPrimaryBackground,
+    },
+    toggleText: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: colors.chipText,
+    },
+    toggleTextActive: {
+      color: colors.buttonPrimaryText,
+    },
+  });
+}

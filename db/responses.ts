@@ -73,6 +73,25 @@ export async function listResponsesForForm(
   return rows.map(mapResponseRow);
 }
 
+export async function listAnsweredQuestionsForForm(
+  db: SQLiteDatabase,
+  formId: number,
+): Promise<AnsweredQuestion[]> {
+  const answerRows = await db.getAllAsync<AnsweredQuestionRow>(
+    `SELECT
+       a.id AS a_id, a.response_id AS a_response_id, a.question_id AS a_question_id,
+       a.value_text AS a_value_text, a.value_numeric AS a_value_numeric, a.value_bool AS a_value_bool,
+       q.id AS q_id, q.form_id AS q_form_id, q.prompt AS q_prompt,
+       q.type AS q_type, q.sort_order AS q_sort_order, q.required AS q_required
+     FROM answers a
+     JOIN questions q ON q.id = a.question_id
+     WHERE q.form_id = ?
+     ORDER BY q.sort_order ASC`,
+    formId,
+  );
+  return answerRows.map(mapAnsweredQuestionRow);
+}
+
 export async function getResponseWithAnswers(
   db: SQLiteDatabase,
   responseId: number,

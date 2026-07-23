@@ -118,6 +118,14 @@ export default function FormDetail() {
           >
             <Text style={styles.secondaryButtonText}>Edit Form</Text>
           </Pressable>
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={() =>
+              router.push({ pathname: "/forms/[id]/insights", params: { id } })
+            }
+          >
+            <Text style={styles.secondaryButtonText}>Insights</Text>
+          </Pressable>
         </View>
 
         <Pressable onPress={confirmDeleteForm}>

@@ -1,5 +1,24 @@
 import { answerValue } from "@/db/responses";
-import type { AnsweredQuestion, Question } from "@/types/journal";
+import { parseSqliteDate } from "@/lib/dates";
+import type { AnsweredQuestion, FormResponse, Question } from "@/types/journal";
+
+export type InsightTimeRange = "week" | "month" | "all";
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Filters responses down to those created within the given rolling time range (relative to `now`). */
+export function filterResponsesByRange(
+  responses: FormResponse[],
+  range: InsightTimeRange,
+  now: Date = new Date(),
+): FormResponse[] {
+  if (range === "all") return responses;
+  const days = range === "week" ? 7 : 30;
+  const cutoff = now.getTime() - days * DAY_MS;
+  return responses.filter(
+    (r) => parseSqliteDate(r.createdAt).getTime() >= cutoff,
+  );
+}
 
 export interface NumericInsight {
   type: "numeric";

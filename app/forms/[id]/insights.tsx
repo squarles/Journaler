@@ -2,7 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { InsightCard } from "@/components/InsightCard";
 import type { ThemeColors } from "@/constants/theme";
@@ -12,12 +12,23 @@ import {
   listResponsesForForm,
 } from "@/db/responses";
 import { useThemeColors } from "@/hooks/useThemeColors";
-import { computeQuestionInsights } from "@/lib/stats";
+import {
+  computeQuestionInsights,
+  filterResponsesByRange,
+  type InsightTimeRange,
+} from "@/lib/stats";
 import type {
   AnsweredQuestion,
   FormResponse,
   FormWithQuestions,
 } from "@/types/journal";
+
+const RANGES: InsightTimeRange[] = ["week", "month", "all"];
+const RANGE_LABELS: Record<InsightTimeRange, string> = {
+  week: "Past Week",
+  month: "Past Month",
+  all: "All Time",
+};
 
 export default function FormInsights() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -30,6 +41,7 @@ export default function FormInsights() {
   const [answeredQuestions, setAnsweredQuestions] = useState<
     AnsweredQuestion[]
   >([]);
+  const [range, setRange] = useState<InsightTimeRange>("all");
 
   useFocusEffect(
     useCallback(() => {
@@ -39,9 +51,22 @@ export default function FormInsights() {
     }, [db, formId]),
   );
 
+  const filteredResponses = useMemo(
+    () => filterResponsesByRange(responses, range),
+    [responses, range],
+  );
+
+  const filteredAnsweredQuestions = useMemo(() => {
+    const includedResponseIds = new Set(filteredResponses.map((r) => r.id));
+    return answeredQuestions.filter(
+      (aq) => aq.answer && includedResponseIds.has(aq.answer.responseId),
+    );
+  }, [answeredQuestions, filteredResponses]);
+
   const insights = useMemo(
-    () => computeQuestionInsights(form?.questions ?? [], answeredQuestions),
-    [form, answeredQuestions],
+    () =>
+      computeQuestionInsights(form?.questions ?? [], filteredAnsweredQuestions),
+    [form, filteredAnsweredQuestions],
   );
 
   return (
@@ -53,10 +78,30 @@ export default function FormInsights() {
         keyExtractor={(item) => String(item.question.id)}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
-          <Text style={styles.summary}>
-            {responses.length} response{responses.length === 1 ? "" : "s"}{" "}
-            total
-          </Text>
+          <>
+            <View style={styles.rangeRow}>
+              {RANGES.map((r) => (
+                <Pressable
+                  key={r}
+                  onPress={() => setRange(r)}
+                  style={[styles.rangeChip, range === r && styles.rangeChipActive]}
+                >
+                  <Text
+                    style={[
+                      styles.rangeChipText,
+                      range === r && styles.rangeChipTextActive,
+                    ]}
+                  >
+                    {RANGE_LABELS[r]}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <Text style={styles.summary}>
+              {filteredResponses.length} response
+              {filteredResponses.length === 1 ? "" : "s"}
+            </Text>
+          </>
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -66,7 +111,7 @@ export default function FormInsights() {
           </View>
         }
         renderItem={({ item }) => (
-          <InsightCard insight={item} totalResponses={responses.length} />
+          <InsightCard insight={item} totalResponses={filteredResponses.length} />
         )}
       />
     </View>
@@ -81,6 +126,29 @@ function createStyles(colors: ThemeColors) {
     },
     list: {
       padding: 16,
+    },
+    rangeRow: {
+      flexDirection: "row",
+      gap: 8,
+      marginBottom: 12,
+    },
+    rangeChip: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 8,
+      borderRadius: 16,
+      backgroundColor: colors.border,
+    },
+    rangeChipActive: {
+      backgroundColor: colors.buttonPrimaryBackground,
+    },
+    rangeChipText: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: colors.chipText,
+    },
+    rangeChipTextActive: {
+      color: colors.buttonPrimaryText,
     },
     summary: {
       fontSize: 14,

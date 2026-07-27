@@ -4,6 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 
+import { DateTimePickerField } from "@/components/DateTimePickerField";
 import { QuestionTypeInput } from "@/components/QuestionTypeInput";
 import type { ThemeColors } from "@/constants/theme";
 import { getFormWithQuestions } from "@/db/forms";
@@ -15,6 +16,7 @@ import {
 } from "@/db/responses";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { confirmAsync, notify } from "@/lib/confirm";
+import { parseSqliteDate, toSqliteDate } from "@/lib/dates";
 import type { AnswerDraft, FormWithQuestions } from "@/types/journal";
 
 export default function ResponseDetail() {
@@ -31,6 +33,7 @@ export default function ResponseDetail() {
   const [values, setValues] = useState<
     Record<number, string | number | boolean | null>
   >({});
+  const [createdAt, setCreatedAt] = useState(new Date());
 
   useFocusEffect(
     useCallback(() => {
@@ -47,6 +50,7 @@ export default function ResponseDetail() {
             initial[question.id] = answerValue(answer);
           }
           setValues(initial);
+          setCreatedAt(parseSqliteDate(responseResult.createdAt));
         }
       });
       return () => {
@@ -76,7 +80,7 @@ export default function ResponseDetail() {
       value: values[q.id] ?? null,
     }));
 
-    await updateResponse(db, respId, answers);
+    await updateResponse(db, respId, answers, toSqliteDate(createdAt));
     router.back();
   }
 
@@ -101,6 +105,8 @@ export default function ResponseDetail() {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
+        <DateTimePickerField value={createdAt} onChange={setCreatedAt} />
+
         {form.questions.map((question) => (
           <QuestionTypeInput
             key={question.id}

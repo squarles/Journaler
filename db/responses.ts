@@ -143,13 +143,20 @@ export async function createResponse(
   db: SQLiteDatabase,
   formId: number,
   answers: AnswerDraft[],
+  createdAt?: string,
 ): Promise<number> {
   let newResponseId = 0;
   await db.withTransactionAsync(async () => {
-    const result = await db.runAsync(
-      "INSERT INTO responses (form_id) VALUES (?)",
-      formId,
-    );
+    const result = createdAt
+      ? await db.runAsync(
+          "INSERT INTO responses (form_id, created_at) VALUES (?, ?)",
+          formId,
+          createdAt,
+        )
+      : await db.runAsync(
+          "INSERT INTO responses (form_id) VALUES (?)",
+          formId,
+        );
     newResponseId = result.lastInsertRowId;
 
     for (const a of answers) {
@@ -171,12 +178,21 @@ export async function updateResponse(
   db: SQLiteDatabase,
   responseId: number,
   answers: AnswerDraft[],
+  createdAt?: string,
 ): Promise<void> {
   await db.withTransactionAsync(async () => {
-    await db.runAsync(
-      "UPDATE responses SET updated_at = datetime('now') WHERE id = ?",
-      responseId,
-    );
+    if (createdAt) {
+      await db.runAsync(
+        "UPDATE responses SET created_at = ?, updated_at = datetime('now') WHERE id = ?",
+        createdAt,
+        responseId,
+      );
+    } else {
+      await db.runAsync(
+        "UPDATE responses SET updated_at = datetime('now') WHERE id = ?",
+        responseId,
+      );
+    }
 
     for (const a of answers) {
       const [valueText, valueNumeric, valueBool] = toColumns(a.type, a.value);

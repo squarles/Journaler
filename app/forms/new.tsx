@@ -23,7 +23,7 @@ export default function NewForm() {
       notify("Missing title", "Please enter a title for this form.");
       return;
     }
-    if (data.questions.length == 0) {
+    if (data.questions.length === 0) {
       notify("Empty form", "Please add at least 1 question.");
       return;
     }

@@ -5,6 +5,7 @@ import Svg, { Circle, G, Line as SvgLine, Path, Text as SvgText } from "react-na
 
 import type { ThemeColors } from "@/constants/theme";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import { computeXPositions } from "@/lib/stats";
 
 export interface LineChartSeries {
   id: number;
@@ -18,6 +19,8 @@ export interface LineChartSeries {
 interface Props {
   /** X-axis category labels, aligned with each series' `values` array. */
   labels: string[];
+  /** Epoch-ms instant for each x position, aligned with `labels`; spaces points by real elapsed time. */
+  timestamps: number[];
   series: LineChartSeries[];
   height?: number;
 }
@@ -58,7 +61,7 @@ function toSegments(values: (number | null)[]): number[][] {
   return segments;
 }
 
-export function LineChart({ labels, series, height = 200 }: Props) {
+export function LineChart({ labels, timestamps, series, height = 200 }: Props) {
   const colors = useThemeColors();
   const styles = createStyles(colors);
   const [width, setWidth] = useState(0);
@@ -86,10 +89,10 @@ export function LineChart({ labels, series, height = 200 }: Props) {
     [series],
   );
 
-  function xAt(index: number): number {
-    if (count <= 1) return PADDING_LEFT + plotWidth / 2;
-    return PADDING_LEFT + (index / (count - 1)) * plotWidth;
-  }
+  const xPositions = useMemo(
+    () => computeXPositions(timestamps, plotWidth, PADDING_LEFT),
+    [timestamps, plotWidth],
+  );
 
   function yAt(seriesIndex: number, value: number): number {
     if (isComparing) return PADDING_TOP + (1 - value) * plotHeight;
@@ -98,20 +101,28 @@ export function LineChart({ labels, series, height = 200 }: Props) {
     return PADDING_TOP + (1 - (value - min) / (max - min)) * plotHeight;
   }
 
-  function indexFromX(locationX: number): number | null {
-    if (count === 0 || !Number.isFinite(locationX)) return null;
-    const ratio = count > 1 ? (locationX - PADDING_LEFT) / plotWidth : 0;
-    return Math.min(Math.max(Math.round(ratio * (count - 1)), 0), count - 1);
+  function nearestIndexFromX(locationX: number): number | null {
+    if (xPositions.length === 0 || !Number.isFinite(locationX)) return null;
+    let nearest = 0;
+    let nearestDistance = Infinity;
+    for (let i = 0; i < xPositions.length; i++) {
+      const distance = Math.abs(xPositions[i] - locationX);
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearest = i;
+      }
+    }
+    return nearest;
   }
 
   function handleTouchStart(e: GestureResponderEvent) {
-    const index = indexFromX(e.nativeEvent.locationX);
+    const index = nearestIndexFromX(e.nativeEvent.locationX);
     if (index === null) return;
     setActiveIndex((prev) => (prev === index ? null : index));
   }
 
   function handleTouchMove(e: GestureResponderEvent) {
-    const index = indexFromX(e.nativeEvent.locationX);
+    const index = nearestIndexFromX(e.nativeEvent.locationX);
     if (index !== null) setActiveIndex(index);
   }
 
@@ -173,8 +184,8 @@ export function LineChart({ labels, series, height = 200 }: Props) {
 
               {activeIndex !== null && (
                 <SvgLine
-                  x1={xAt(activeIndex)}
-                  x2={xAt(activeIndex)}
+                  x1={xPositions[activeIndex]}
+                  x2={xPositions[activeIndex]}
                   y1={PADDING_TOP}
                   y2={PADDING_TOP + plotHeight}
                   stroke={colors.textTertiary}
@@ -196,7 +207,7 @@ export function LineChart({ labels, series, height = 200 }: Props) {
                         key={segIndex}
                         d={segment
                           .map((i, pointIndex) => {
-                            const x = xAt(i);
+                            const x = xPositions[i];
                             const y = yAt(si, values[i] as number);
                             return `${pointIndex === 0 ? "M" : "L"} ${x} ${y}`;
                           })
@@ -212,7 +223,7 @@ export function LineChart({ labels, series, height = 200 }: Props) {
                     {segments.flat().map((i) => (
                       <Circle
                         key={i}
-                        cx={xAt(i)}
+                        cx={xPositions[i]}
                         cy={yAt(si, values[i] as number)}
                         r={activeIndex === i ? 5 : 3}
                         fill={s.color}
@@ -225,7 +236,7 @@ export function LineChart({ labels, series, height = 200 }: Props) {
                         the legend and tap tooltip already carry those values, so skip it there. */}
                     {!isComparing && lastDefinedIndex !== undefined && (
                       <SvgText
-                        x={xAt(lastDefinedIndex) + 8}
+                        x={xPositions[lastDefinedIndex] + 8}
                         y={yAt(si, values[lastDefinedIndex] as number) + 4}
                         fontSize={12}
                         fontWeight="600"

@@ -134,3 +134,22 @@ export function computeQuestionInsights(
     }
   });
 }
+
+/** Places each point along a chart's x-axis in proportion to its real elapsed time, not its index. */
+export function computeXPositions(
+  timestamps: number[],
+  plotWidth: number,
+  paddingLeft: number,
+): number[] {
+  const n = timestamps.length;
+  if (n === 0) return [];
+  if (n === 1) return [paddingLeft + plotWidth / 2];
+  const min = Math.min(...timestamps);
+  const max = Math.max(...timestamps);
+  const range = max - min;
+  if (range === 0) {
+    // Every entry shares the same instant; an even spread is the only sensible fallback.
+    return timestamps.map((_, i) => paddingLeft + (i / (n - 1)) * plotWidth);
+  }
+  return timestamps.map((t) => paddingLeft + ((t - min) / range) * plotWidth);
+}

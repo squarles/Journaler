@@ -107,6 +107,11 @@ export default function FormInsights() {
     [chronologicalResponses],
   );
 
+  const chartTimestamps = useMemo(
+    () => chronologicalResponses.map((r) => parseSqliteDate(r.createdAt).getTime()),
+    [chronologicalResponses],
+  );
+
   const selectedQuestions = useMemo(
     () =>
       selectedQuestionIds
@@ -202,7 +207,11 @@ export default function FormInsights() {
                     No responses in this range.
                   </Text>
                 ) : (
-                  <LineChart labels={chartLabels} series={chartSeries} />
+                  <LineChart
+                    labels={chartLabels}
+                    timestamps={chartTimestamps}
+                    series={chartSeries}
+                  />
                 )}
               </View>
             )}

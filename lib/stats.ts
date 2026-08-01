@@ -46,6 +46,35 @@ export interface ShortTextInsight {
 
 export type QuestionInsight = NumericInsight | YesNoInsight | ShortTextInsight;
 
+/** Only numeric and yes/no questions have a plottable value; yes/no maps to 1 (yes) / 0 (no). */
+export function isGraphableQuestion(question: Question): boolean {
+  return question.type === "numeric" || question.type === "yes_no";
+}
+
+/**
+ * Builds one point per response for a question, in the given chronological response order.
+ * A response where the question went unanswered produces a `null`, so the chart can render
+ * a gap instead of connecting across missing data.
+ */
+export function buildQuestionSeries(
+  question: Question,
+  chronologicalResponses: FormResponse[],
+  answeredQuestions: AnsweredQuestion[],
+): (number | null)[] {
+  const valueByResponseId = new Map<number, number>();
+  for (const aq of answeredQuestions) {
+    if (aq.question.id !== question.id || !aq.answer) continue;
+    const value = answerValue(aq.answer);
+    if (typeof value === "number") valueByResponseId.set(aq.answer.responseId, value);
+    else if (typeof value === "boolean") {
+      valueByResponseId.set(aq.answer.responseId, value ? 1 : 0);
+    }
+  }
+  return chronologicalResponses.map(
+    (r) => valueByResponseId.get(r.id) ?? null,
+  );
+}
+
 /** Aggregates every answer given to each question of a form into a per-question summary. */
 export function computeQuestionInsights(
   questions: Question[],

@@ -12,6 +12,8 @@ export interface ThemeColors {
   chipText: string;
   buttonPrimaryBackground: string;
   buttonPrimaryText: string;
+  chartSeries1: string;
+  chartSeries2: string;
 }
 
 export const Colors: { light: ThemeColors; dark: ThemeColors } = {
@@ -29,6 +31,8 @@ export const Colors: { light: ThemeColors; dark: ThemeColors } = {
     chipText: "#3c3c43",
     buttonPrimaryBackground: "#1c1c1e",
     buttonPrimaryText: "#ffffff",
+    chartSeries1: "#2a78d6",
+    chartSeries2: "#eb6834",
   },
   dark: {
     background: "#000000",
@@ -44,5 +48,7 @@ export const Colors: { light: ThemeColors; dark: ThemeColors } = {
     chipText: "#d1d1d6",
     buttonPrimaryBackground: "#f2f2f7",
     buttonPrimaryText: "#1c1c1e",
+    chartSeries1: "#3987e5",
+    chartSeries2: "#d95926",
   },
 };

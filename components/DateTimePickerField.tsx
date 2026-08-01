@@ -170,7 +170,7 @@ function createStyles(colors: ThemeColors) {
       marginBottom: 8,
     },
     row: {
-      flexDirection: "row",
+      flexDirection: "column",
       gap: 10,
     },
     field: {

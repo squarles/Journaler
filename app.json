@@ -12,7 +12,8 @@
       }
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "output": "static"
     },
     "scheme": "journaler",
     "userInterfaceStyle": "automatic",
@@ -40,6 +41,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a8aff6cb-9743-4f0c-86bc-cf057477da77"
+      }
     }
   }
 }

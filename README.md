@@ -6,6 +6,8 @@ This is a custom form-making app designed to be answered repeatedly by the user.
 
 Currently, this app's basic functions are working, but more features are planned.
 
+This app is now deployed to the web! Try it [here](https://journaler.expo.app).
+
 ## Where is the app's data stored?
 
 The app stores all user-generated information directly on the device using SQLite.
